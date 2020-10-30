@@ -1,4 +1,4 @@
-# Urbica OpenTripPlanner Docker image
+# NKF OpenTripPlanner Docker image
 
 [OpenTripPlanner](http://www.opentripplanner.org/) (OTP) is a family of open source software projects that provide passenger information and transportation network analysis services. The core server-side Java component finds itineraries combining transit, pedestrian, bicycle, and car segments through networks built from widely available, open standard OpenStreetMap and GTFS data. This service can be accessed directly via its web API or using a range of Javascript client libraries, including modern reactive modular components targeting mobile platforms.
 
@@ -8,9 +8,19 @@ Build graphs using GTFS and OSM extract in the current directory:
 
 ```shell
 docker run \
-  -v $PWD:/graphs \
+  -v $PWD:/var/otp/graphs \
   -e JAVA_OPTIONS=-Xmx4G \
-  urbica/otp --build /graphs
+  nkf/otp --buildStreet /var/otp/graphs
+
+mkdir graphs
+
+docker run \
+  -v $PWD:/var/otp/graphs \
+  -e JAVA_OPTIONS=-Xmx4G \
+  nkf/otp --loadStreet --save /var/otp/graphs
+  
+  mv streetGraph.obj graphs/streetGraph.obj
+  mv graph.obj graphs/graph.obj
 ```
 
 Run OTP server:
@@ -18,19 +28,9 @@ Run OTP server:
 ```shell
 docker run \
   -p 8080:8080 \
-  -v $PWD:/var/otp/graphs \
+  -v $PWD/graphs:/var/otp/graphs \
   -e JAVA_OPTIONS=-Xmx4G \
-  otp --server --autoScan --verbose
-```
-
-...or run OTP server with analyst module:
-
-```shell
-docker run \
-  -p 8080:8080 \
-  -v $PWD:/graphs \
-  -e JAVA_OPTIONS=-Xmx4G \
-  urbica/otp --basePath /data --server --analyst --autoScan --verbose
+  nkf/otp --load /var/otp/graphs
 ```
 
 ## Basic Tutorial
