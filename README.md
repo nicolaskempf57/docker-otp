@@ -4,6 +4,12 @@
 
 ## Usage
 
+Before using the image, you must build it first. You can use the tag of your choice here to use it after.
+
+```shell
+docker build -t nkf/otp  .
+```
+
 Build graphs using GTFS and OSM extract in the current directory:
 
 ```shell
